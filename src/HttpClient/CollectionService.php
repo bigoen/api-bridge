@@ -13,7 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 /**
  * @author Şafak Saylam <safak@bigoen.com>
  */
-class ItemService extends AbstractService
+class CollectionService extends AbstractService
 {
     /**
      * @throws ClientExceptionInterface
@@ -22,9 +22,9 @@ class ItemService extends AbstractService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function put(object $model): object
+    public function post(object $model): object
     {
-        return self::arrayToObject(get_class($model), $this->putToArray(self::objectToArray($model)));
+        return self::arrayToObject(get_class($model), $this->postFromArray(self::objectToArray($model)));
     }
 
     /**
@@ -34,9 +34,18 @@ class ItemService extends AbstractService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function get(): ?object
+    public function get(): array
     {
-        return self::arrayToObject($this->class, $this->getToArray());
+        $objects = [];
+        $arr = $this->getFromArray();
+        if (self::JSONLD === $this->getContentType()) {
+            $arr = $arr['hydra:member'];
+        }
+        foreach ($arr as $value) {
+            $objects[] = self::arrayToObject($this->class, $value);
+        }
+
+        return $objects;
     }
 
     /**
@@ -46,9 +55,9 @@ class ItemService extends AbstractService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function putToArray(array $arr): array
+    public function postFromArray(array $arr): array
     {
-        return $this->request('PUT', $this->getItemUrl(), $arr);
+        return $this->request('POST', $this->getUrl(), $arr);
     }
 
     /**
@@ -58,8 +67,8 @@ class ItemService extends AbstractService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getToArray(): array
+    public function getFromArray(): array
     {
-        return $this->request('GET', $this->getItemUrl());
+        return $this->request('GET', $this->getUrl());
     }
 }
