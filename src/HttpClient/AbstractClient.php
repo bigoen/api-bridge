@@ -77,13 +77,15 @@ abstract class AbstractClient
             }
         }
         $response = $this->httpClient->request($method, $url, $this->options);
+        if (true === $this->returnOnlyResponse) {
+            $this->setContentType($response);
+
+            return $response;
+        }
         if ('DELETE' === $method) {
             return $response->getStatusCode();
         }
         $this->setContentType($response);
-        if (true === $this->returnOnlyResponse) {
-            return $response;
-        }
         if (self::XML === $this->contentType) {
             return $this->xmlDecode($response->getContent($this->throw), 'array');
         }

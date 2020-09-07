@@ -72,7 +72,7 @@ class Client extends AbstractClient
      */
     public function post(object $model): object
     {
-        return self::arrayToObject(get_class($model), $this->postFromArray(self::objectToArray($model)));
+        return self::arrayToObject(get_class($model), $this->postToArray(self::objectToArray($model)));
     }
 
     /**
@@ -85,7 +85,7 @@ class Client extends AbstractClient
     public function getAll(): array
     {
         $objects = [];
-        $arr = $this->getAllFromArray();
+        $arr = $this->getAllToArray();
         if (self::JSONLD === $this->getContentType()) {
             $arr = $arr['hydra:member'];
         }
@@ -103,7 +103,7 @@ class Client extends AbstractClient
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function postFromArray(array $arr): array
+    public function postToArray(array $arr): array
     {
         return $this->request('POST', $this->getUrl(), $arr);
     }
@@ -115,7 +115,7 @@ class Client extends AbstractClient
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getAllFromArray(): array
+    public function getAllToArray(): array
     {
         return $this->request('GET', $this->getUrl());
     }
