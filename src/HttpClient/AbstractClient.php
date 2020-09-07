@@ -234,7 +234,7 @@ abstract class AbstractClient
         return $this;
     }
 
-    public function setFormats($formats): self
+    public function setFormats(array $formats): self
     {
         self::$formats = $formats;
 
