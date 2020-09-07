@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Bigoen\ApiBridge\HttpClient\Traits;
+namespace Bigoen\ApiBridge\Bridge\ApiPlatform\HttpClient\Traits;
+
+use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\JsonldPagination;
 
 /**
  * @author Şafak Saylam <safak@bigoen.com>
@@ -19,18 +21,9 @@ trait GetTrait
         return $this->request('GET', $this->getItemUrl());
     }
 
-    public function getAll(?string $dataPath = null): array
+    public function getAll(): JsonldPagination
     {
-        $objects = [];
-        $arr = $this->getAllToArray();
-        if (is_string($dataPath) && isset($arr[$dataPath])) {
-            $arr = $arr[$dataPath];
-        }
-        foreach ($arr as $value) {
-            $objects[] = self::arrayToObject($this->class, $value);
-        }
-
-        return $objects;
+        return JsonldPagination::new($this->class, $this->getAllToArray());
     }
 
     public function getAllToArray(): array

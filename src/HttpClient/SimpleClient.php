@@ -12,7 +12,7 @@ use Bigoen\ApiBridge\HttpClient\Traits\PutTrait;
 /**
  * @author Şafak Saylam <safak@bigoen.com>
  */
-class Client extends AbstractClient
+class SimpleClient extends AbstractClient
 {
     use GetTrait, PostTrait, PutTrait, DeleteTrait;
 }
