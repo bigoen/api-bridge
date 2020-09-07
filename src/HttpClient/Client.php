@@ -13,7 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 /**
  * @author Şafak Saylam <safak@bigoen.com>
  */
-class Service extends AbstractService
+class Client extends AbstractClient
 {
     /**
      * @throws ClientExceptionInterface

@@ -17,7 +17,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 /**
  * @author Şafak Saylam <safak@bigoen.com>
  */
-abstract class AbstractService
+abstract class AbstractClient
 {
     use ArrayObjectConverterTrait;
 
