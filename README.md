@@ -13,7 +13,8 @@ Create model:
 
 namespace App\Model;
 
-class Example {
+class Example 
+{
     public ?string $name = null;
     public ?string $email = null;
 }
@@ -65,7 +66,8 @@ namespace App\Model;
 
 use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits\JsonldModelTrait;
 
-class Example {
+class Example 
+{
     use JsonldModelTrait;
 
     public ?string $name = null;
