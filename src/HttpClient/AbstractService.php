@@ -26,8 +26,10 @@ abstract class AbstractService
     const XML = 'xml';
 
     protected HttpClientInterface $httpClient;
+    protected bool $throw = true;
+    protected bool $returnOnlyResponse = false;
 
-    static array $formats = [
+    public static array $formats = [
         self::JSON => ['application/json', 'application/x-json'],
         self::JSONLD => ['application/ld+json'],
         self::XML => ['text/xml', 'application/xml', 'application/x-xml'],
@@ -53,30 +55,54 @@ abstract class AbstractService
     }
 
     /**
+     * @return array|int|ResponseInterface
+     *
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      * @throws DecodingExceptionInterface
      */
-    public function request(string $method, string $url, ?array $data = null): array
+    public function request(string $method, string $url, ?array $data = null)
     {
         if (is_array($data) && in_array($method, ['POST', 'PUT'])) {
             if (self::XML === $this->format) {
-                $data = (new XmlEncoder())->encode($data, self::XML);
+                $data = $this->xmlEncode($data);
                 $this->options['body'] = $data;
                 $this->options['headers']['Content-Type'] = 'text/xml; charset=utf-8';
-            } else {
+            } elseif (in_array($this->format, [self::JSON, self::JSONLD])) {
                 $this->options['json'] = $data;
+            } else {
+                $this->options['body'] = $data;
             }
         }
         $response = $this->httpClient->request($method, $url, $this->options);
+        if ('DELETE' === $method) {
+            return $response->getStatusCode();
+        }
         $this->setContentType($response);
+        if (true === $this->returnOnlyResponse) {
+            return $response;
+        }
         if (self::XML === $this->contentType) {
-            return (new XmlEncoder())->decode($response->getContent(), 'array');
+            return $this->xmlDecode($response->getContent($this->throw), 'array');
         }
 
-        return $response->toArray();
+        return $response->toArray($this->throw);
+    }
+
+    public function xmlEncode($data, string $format = self::XML, array $context = []): ?string
+    {
+        $str = (new XmlEncoder())->encode($data, $format, $context);
+
+        return is_string($str) ? $str : null;
+    }
+
+    public function xmlDecode(string $data, string $format, array $context = []): ?array
+    {
+        $arr = (new XmlEncoder())->decode($data, $format, $context);
+
+        return is_array($arr) ? $arr : null;
     }
 
     public function getUrl(): string
@@ -114,6 +140,9 @@ abstract class AbstractService
      */
     public function setContentType(ResponseInterface $response): self
     {
+        if (!isset($response->getHeaders()['content-type'][0])) {
+            return $this;
+        }
         $contentType = $response->getHeaders()['content-type'][0];
         foreach (static::$formats as $name => $format) {
             foreach ($format as $strFormat) {
@@ -131,6 +160,20 @@ abstract class AbstractService
     public function getContentType(): ?string
     {
         return $this->contentType;
+    }
+
+    public function setThrow(bool $throw): self
+    {
+        $this->throw = $throw;
+
+        return $this;
+    }
+
+    public function setReturnOnlyResponse(bool $returnOnlyResponse): self
+    {
+        $this->returnOnlyResponse = $returnOnlyResponse;
+
+        return $this;
     }
 
     public function setId($id): self
@@ -178,6 +221,20 @@ abstract class AbstractService
     public function setIdPath(string $idPath): self
     {
         $this->idPath = $idPath;
+
+        return $this;
+    }
+
+    public function setFormat(string $format): self
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    public function setFormats($formats): self
+    {
+        self::$formats = $formats;
 
         return $this;
     }

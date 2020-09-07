@@ -13,8 +13,56 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 /**
  * @author Şafak Saylam <safak@bigoen.com>
  */
-class CollectionService extends AbstractService
+class Service extends AbstractService
 {
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function put(object $model): object
+    {
+        return self::arrayToObject(get_class($model), $this->putToArray(self::objectToArray($model)));
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function get(): ?object
+    {
+        return self::arrayToObject($this->class, $this->getToArray());
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function putToArray(array $arr): array
+    {
+        return $this->request('PUT', $this->getItemUrl(), $arr);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getToArray(): array
+    {
+        return $this->request('GET', $this->getItemUrl());
+    }
+
     /**
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
@@ -34,10 +82,10 @@ class CollectionService extends AbstractService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function get(): array
+    public function getAll(): array
     {
         $objects = [];
-        $arr = $this->getFromArray();
+        $arr = $this->getAllFromArray();
         if (self::JSONLD === $this->getContentType()) {
             $arr = $arr['hydra:member'];
         }
@@ -67,8 +115,20 @@ class CollectionService extends AbstractService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getFromArray(): array
+    public function getAllFromArray(): array
     {
         return $this->request('GET', $this->getUrl());
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function delete(): bool
+    {
+        return 204 === $this->request('DELETE', $this->getItemUrl());
     }
 }
