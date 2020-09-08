@@ -11,7 +11,9 @@ trait PutTrait
 {
     public function put(object $model): object
     {
-        return self::arrayToObject(get_class($model), $this->putToArray(self::objectToArray($model)));
+        $class = get_class($model);
+        
+        return self::arrayToObject(new $class(), $this->putToArray(self::objectToArray($model)));
     }
 
     public function putToArray(array $arr): array

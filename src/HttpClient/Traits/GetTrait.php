@@ -11,7 +11,7 @@ trait GetTrait
 {
     public function get(): ?object
     {
-        return self::arrayToObject($this->class, $this->getToArray());
+        return self::arrayToObject(new $this->class(), $this->getToArray());
     }
 
     public function getToArray(): array
@@ -27,7 +27,7 @@ trait GetTrait
             $arr = $arr[$dataPath];
         }
         foreach ($arr as $value) {
-            $objects[] = self::arrayToObject($this->class, $value);
+            $objects[] = self::arrayToObject(new $this->class(), $value);
         }
 
         return $objects;

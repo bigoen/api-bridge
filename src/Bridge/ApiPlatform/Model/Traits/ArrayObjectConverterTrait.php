@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits;
 
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -20,13 +21,19 @@ trait ArrayObjectConverterTrait
     protected static ?PropertyAccessor $propertyAccessor = null;
     protected static ?PropertyInfoExtractor $propertyInfo = null;
 
-    public static function arrayToObject(string $class, array $arr): object
+    public static function arrayToObject(object $model, array $arr): object
     {
         $accessor = self::getPropertyAccessor();
-        $model = new $class();
         foreach ($arr as $property => $value) {
             if ($accessor->isWritable($model, $property)) {
-                $accessor->setValue($model, $property, $value);
+                $propertyValue = $accessor->getValue($model, $property);
+                if (class_exists(Collection::class) && $propertyValue instanceof Collection && is_array($value)) {
+                    foreach ($value as $data) {
+                        $propertyValue->add($data);
+                    }
+                } else {
+                    $accessor->setValue($model, $property, $value);
+                }
             }
         }
         if (

@@ -19,18 +19,10 @@ class JsonldClient extends AbstractClient
     use GetTrait, PostTrait, PutTrait, DeleteTrait, ArrayObjectConverterTrait;
 
     protected array $convertProperties = [];
-    protected array $convertValues = [];
 
     public function setConvertProperties(array $convertProperties): self
     {
         $this->convertProperties = $convertProperties;
-
-        return $this;
-    }
-
-    public function setConvertValues(array $convertValues): self
-    {
-        $this->convertValues = $convertValues;
 
         return $this;
     }

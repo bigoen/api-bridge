@@ -11,7 +11,9 @@ trait PostTrait
 {
     public function post(object $model): object
     {
-        return self::arrayToObject(get_class($model), $this->postToArray(self::objectToArray($model)));
+        $class = get_class($model);
+
+        return self::arrayToObject(new $class(), $this->postToArray(self::objectToArray($model)));
     }
 
     public function postToArray(array $arr): array

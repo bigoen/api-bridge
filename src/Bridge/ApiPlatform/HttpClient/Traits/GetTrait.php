@@ -13,7 +13,7 @@ trait GetTrait
 {
     public function get(): ?object
     {
-        return self::arrayToObject($this->class, $this->getToArray());
+        return self::arrayToObject(new $this->class(), $this->getToArray());
     }
 
     public function getToArray(): array
@@ -23,7 +23,7 @@ trait GetTrait
 
     public function getAll(): JsonldPagination
     {
-        return JsonldPagination::new($this->class, $this->getAllToArray(), $this->convertProperties, $this->convertValues);
+        return JsonldPagination::new($this->class, $this->getAllToArray(), $this->convertProperties);
     }
 
     public function getAllToArray(): array

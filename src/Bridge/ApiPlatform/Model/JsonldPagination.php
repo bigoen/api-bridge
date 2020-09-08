@@ -6,6 +6,7 @@ namespace Bigoen\ApiBridge\Bridge\ApiPlatform\Model;
 
 use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits\ArrayObjectConverterTrait;
 use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits\JsonldModelTrait;
+use Bigoen\ApiBridge\Model\ConvertProperty;
 
 /**
  * @author Şafak Saylam <safak@bigoen.com>
@@ -21,7 +22,7 @@ class JsonldPagination
     public ?string $lastPagePath = null;
     public ?string $nextPagePath = null;
 
-    public static function new(string $class, array $data, array $convertProperties = [], array $convertValues = []): self
+    public static function new(string $class, array $data, array $convertProperties = []): self
     {
         $object = new self();
         $object->jsonldContext = $data['@context'] ?? null;
@@ -35,17 +36,41 @@ class JsonldPagination
         if (!isset($data['hydra:member'])) {
             return $object;
         }
+        $accessor = self::getPropertyAccessor();
         foreach ($data['hydra:member'] as $value) {
-            foreach ($convertProperties as $property) {
-                if (isset($value[$property]) && !is_null($value[$property])) {
-                    if (isset($convertValues[$value[$property]])) {
-                        $value[$property] = $convertValues[$value[$property]];
-                    } else {
-                        $value[$property] = null;
+            foreach ($convertProperties as $convertProperty) {
+                if (!$convertProperty instanceof ConvertProperty) {
+                    continue;
+                }
+                $property = $convertProperty->property;
+                $deep = $convertProperty->deep;
+                $convertValues = $convertProperty->items;
+                if (false !== strpos($deep, '[]') && $accessor->isWritable($value, $property)) {
+                    $items = [];
+                    foreach ($accessor->getValue($value, $property) as $key => $item) {
+                        $deepKey = str_replace('[]', "[$key]", $deep);
+                        $accessValue = $accessor->getValue($value, $deepKey);
+                        if (!is_null($accessValue) && isset($convertValues[$accessValue])) {
+                            $items[] = self::arrayToObject($convertValues[$accessValue], $item);
+                        } else {
+                            $items[] = self::arrayToObject(new $convertProperty->itemClass(), $item);
+                        }
+                    }
+                    $accessor->setValue($value, $property, $items);
+                } else {
+                    if ($accessor->isReadable($value, $deep) && $accessor->isWritable($value, $property)) {
+                        $accessValue = $accessor->getValue($value, $deep);
+                        if (!is_null($accessValue) && isset($convertValues[$accessValue])) {
+                            $accessor->setValue(
+                                $value,
+                                $property,
+                                $convertValues[$accessValue]
+                            );
+                        }
                     }
                 }
             }
-            $object->members[] = self::arrayToObject($class, $value);
+            $object->members[] = self::arrayToObject(new $class(), $value);
         }
 
         return $object;
