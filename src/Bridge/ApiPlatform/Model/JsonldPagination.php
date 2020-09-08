@@ -37,8 +37,12 @@ class JsonldPagination
         }
         foreach ($data['hydra:member'] as $value) {
             foreach ($convertProperties as $property) {
-                if (isset($value[$property]) && isset($convertValues[$value[$property]])) {
-                    $value[$property] = $convertValues[$value[$property]];
+                if (isset($value[$property]) && !is_null($value[$property])) {
+                    if (isset($convertValues[$value[$property]])) {
+                        $value[$property] = $convertValues[$value[$property]];
+                    } else {
+                        $value[$property] = null;
+                    }
                 }
             }
             $object->members[] = self::arrayToObject($class, $value);
