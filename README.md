@@ -112,3 +112,36 @@ $model = $client->setPath("/api/examples/{id}")->put($model);
 // delete object.
 $isDelete = $client->setPath("/api/examples/{id}")->setId(1)->delete();
 ```
+
+Convert api values in tree.
+```php
+use Bigoen\ApiBridge\Bridge\ApiPlatform\HttpClient\JsonldClient;
+use Bigoen\ApiBridge\Model\ConvertProperty;
+
+$categories = $this->entityManager
+    ->getRepository(Category::class)
+    ->findAllIndexByParasutId();
+$tags = $this->entityManager
+    ->getRepository(Tag::class)
+    ->findAllIndexByParasutId();
+// set converts.
+$convertProperties = [
+    ConvertProperty::new(
+        '[category]',
+        false,
+        '[category][@id]',
+        null,
+        $this->getConvertValues('/api/categories/{id}', $categories)
+    ),
+    ConvertProperty::new(
+        '[tags]',
+        true,
+        '[tags][][@id]',
+        Tag::class,
+        $this->getConvertValues('/api/tags/{id}', $tags)
+    )
+];
+/* @var $client JsonldClient */
+$client->setConvertProperties($convertProperties);
+```
+Important: property and deep names details > https://symfony.com/doc/current/components/property_access.html
