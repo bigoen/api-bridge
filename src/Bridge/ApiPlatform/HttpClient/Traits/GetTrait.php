@@ -23,7 +23,7 @@ trait GetTrait
 
     public function getAll(): JsonldPagination
     {
-        return JsonldPagination::new($this->class, $this->getAllToArray());
+        return JsonldPagination::new($this->class, $this->getAllToArray(), $this->convertProperties, $this->convertValues);
     }
 
     public function getAllToArray(): array

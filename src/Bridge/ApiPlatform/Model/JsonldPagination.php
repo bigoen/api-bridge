@@ -21,21 +21,28 @@ class JsonldPagination
     public ?string $lastPagePath = null;
     public ?string $nextPagePath = null;
 
-    public static function new(string $class, array $data): self
+    public static function new(string $class, array $data, array $convertProperties = [], array $convertValues = []): self
     {
         $object = new self();
         $object->jsonldContext = $data['@context'] ?? null;
         $object->jsonldId = $data['@id'] ?? null;
         $object->jsonldType = $data['@type'] ?? null;
-        if (isset($data['hydra:member'])) {
-            foreach ($data['hydra:member'] as $value) {
-                $object->members[] = self::arrayToObject($class, $value);
-            }
-        }
+        // hydra view details.
         $object->totalItems = $data['hydra:totalItems'] ?? null;
         $object->firstPagePath = $data['hydra:view']['hydra:first'] ?? null;
         $object->lastPagePath = $data['hydra:view']['hydra:last'] ?? null;
         $object->nextPagePath = $data['hydra:view']['hydra:next'] ?? null;
+        if (!isset($data['hydra:member'])) {
+            return $object;
+        }
+        foreach ($data['hydra:member'] as $value) {
+            foreach ($convertProperties as $property) {
+                if (isset($value[$property]) && isset($convertValues[$value[$property]])) {
+                    $value[$property] = $convertValues[$value[$property]];
+                }
+            }
+            $object->members[] = self::arrayToObject($class, $value);
+        }
 
         return $object;
     }
