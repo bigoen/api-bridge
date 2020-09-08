@@ -120,10 +120,10 @@ use Bigoen\ApiBridge\Model\ConvertProperty;
 
 $categories = $this->entityManager
     ->getRepository(Category::class)
-    ->findAllIndexByParasutId();
+    ->findAllIndexById();
 $tags = $this->entityManager
     ->getRepository(Tag::class)
-    ->findAllIndexByParasutId();
+    ->findAllIndexById();
 // set converts.
 $convertProperties = [
     ConvertProperty::new(
