@@ -13,7 +13,7 @@ trait GetTrait
 {
     public function get(): ?object
     {
-        return self::arrayToObject(new $this->class(), $this->getToArray());
+        return self::arrayToObject(new $this->class(), $this->getToArray(), $this->convertProperties);
     }
 
     public function getToArray(): array
