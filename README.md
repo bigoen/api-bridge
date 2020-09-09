@@ -116,7 +116,8 @@ $isDelete = $client->setPath("/api/examples/{id}")->setId(1)->delete();
 Convert api values in tree.
 ```php
 use Bigoen\ApiBridge\Bridge\ApiPlatform\HttpClient\JsonldClient;
-use Bigoen\ApiBridge\Model\ConvertProperty;
+use Bigoen\ApiBridge\Model\ConvertDateTimeProperty;
+use Bigoen\ApiBridge\Model\ConvertTreeProperty;
 
 $categories = $this->entityManager
     ->getRepository(Category::class)
@@ -126,20 +127,26 @@ $tags = $this->entityManager
     ->findAllIndexById();
 // set converts.
 $convertProperties = [
-    ConvertProperty::new(
+    ConvertTreeProperty::new(
         '[category]',
         false,
         '[category][@id]',
         null,
         $this->getConvertValues('/api/categories/{id}', $categories)
     ),
-    ConvertProperty::new(
+    ConvertTreeProperty::new(
         '[tags]',
         true,
         '[tags][][@id]',
         Tag::class,
-        $this->getConvertValues('/api/tags/{id}', $tags)
-    )
+        $this->getConvertValues('/api/tags/{id}', $tags),
+        [
+            ConvertDateTimeProperty::new('[createdAt]'),
+            ConvertDateTimeProperty::new('[updatedAt]'),
+        ]
+    ),
+    ConvertDateTimeProperty::new('[createdAt]'),
+    ConvertDateTimeProperty::new('[updatedAt]'),
 ];
 /* @var $client JsonldClient */
 $client->setConvertProperties($convertProperties);
