@@ -96,7 +96,8 @@ trait ArrayObjectConverterTrait
         $haveSubConvertProperties = count($subConvertProperties) > 0;
         if (false !== strpos($deep, '[]') && $accessor->isWritable($arr, $property)) {
             $items = [];
-            foreach ($accessor->getValue($arr, $property) as $key => $item) {
+            $subArr = $accessor->getValue($arr, $property) ?? [];
+            foreach ($subArr as $key => $item) {
                 $deepKey = str_replace('[]', "[$key]", $deep);
                 $accessValue = $accessor->getValue($arr, $deepKey);
                 if (!is_null($accessValue) && isset($convertValues[$accessValue])) {
