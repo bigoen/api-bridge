@@ -26,10 +26,12 @@ trait ArrayObjectConverterTrait
 
     public static function arrayToObject(object $model, array $arr, array $convertProperties = []): object
     {
+        $propertyInfo = self::getPropertyInfo();
         $accessor = self::getPropertyAccessor();
         $arr = self::convertProperties($convertProperties, $arr);
+        $class = get_class($model);
         foreach ($arr as $property => $value) {
-            if ($accessor->isWritable($model, $property)) {
+            if ($propertyInfo->isWritable($class, $property)) {
                 $propertyValue = $accessor->getValue($model, $property);
                 if ($propertyValue instanceof Collection && is_array($value)) {
                     foreach ($value as $data) {
@@ -38,6 +40,8 @@ trait ArrayObjectConverterTrait
                 } else {
                     $accessor->setValue($model, $property, $value);
                 }
+            } elseif ('id' === $property && $accessor->isWritable($model, $property)) {
+                $accessor->setValue($model, $property, $value);
             }
         }
         if (

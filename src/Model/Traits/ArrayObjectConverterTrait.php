@@ -19,9 +19,11 @@ trait ArrayObjectConverterTrait
 
     public static function arrayToObject(object $model, array $arr): object
     {
+        $propertyInfo = self::getPropertyInfo();
         $accessor = self::getPropertyAccessor();
+        $class = get_class($model);
         foreach ($arr as $property => $value) {
-            if ($accessor->isWritable($model, $property)) {
+            if ($propertyInfo->isWritable($class, $property)) {
                 $accessor->setValue($model, $property, $value);
             }
         }
