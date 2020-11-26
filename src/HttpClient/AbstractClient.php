@@ -142,10 +142,10 @@ abstract class AbstractClient
      */
     public function setContentType(ResponseInterface $response): self
     {
-        if (!isset($response->getHeaders()['content-type'][0])) {
+        if (!isset($response->getHeaders($this->throw)['content-type'][0])) {
             return $this;
         }
-        $contentType = $response->getHeaders()['content-type'][0];
+        $contentType = $response->getHeaders($this->throw)['content-type'][0];
         foreach (static::$formats as $name => $format) {
             foreach ($format as $strFormat) {
                 if (strpos($contentType, $strFormat) !== false) {
