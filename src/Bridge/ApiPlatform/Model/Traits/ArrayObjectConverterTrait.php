@@ -120,11 +120,18 @@ trait ArrayObjectConverterTrait
         } else {
             if ($accessor->isReadable($arr, $deep) && $accessor->isWritable($arr, $property)) {
                 $accessValue = $accessor->getValue($arr, $deep);
+                $onlyConvertAccessValue = $accessor->getValue($arr, $property);
                 if (!is_null($accessValue) && isset($convertValues[$accessValue])) {
                     $accessor->setValue(
                         $arr,
                         $property,
                         $convertValues[$accessValue]
+                    );
+                } elseif (!is_null($onlyConvertAccessValue) && is_array($onlyConvertAccessValue)) {
+                    $accessor->setValue(
+                        $arr,
+                        $property,
+                        self::arrayToObject(new $convertProperty->itemClass(), $onlyConvertAccessValue)
                     );
                 }
             }
