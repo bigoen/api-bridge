@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits;
 
 use Bigoen\ApiBridge\Model\ConvertDateTimeProperty;
+use Bigoen\ApiBridge\Model\ConvertTimestampProperty;
 use Bigoen\ApiBridge\Model\ConvertTreeProperty;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
@@ -80,6 +81,8 @@ trait ArrayObjectConverterTrait
                 $arr = self::convertTreeProperty($convertProperty, $arr);
             } elseif ($convertProperty instanceof ConvertDateTimeProperty) {
                 $arr = self::convertDateTimeProperty($convertProperty, $arr);
+            } elseif ($convertProperty instanceof ConvertTimestampProperty) {
+                $arr = self::convertTimestampProperty($convertProperty, $arr);
             }
         }
 
@@ -150,6 +153,22 @@ trait ArrayObjectConverterTrait
         $strValue = $accessor->getValue($arr, $property);
         if (is_string($strValue)) {
             $value = DateTime::createFromFormat($convertProperty->format, $strValue);
+            $accessor->setValue($arr, $property, $value);
+        }
+
+        return $arr;
+    }
+
+    public static function convertTimestampProperty(ConvertTimestampProperty $convertProperty, array $arr): array
+    {
+        $accessor = self::getPropertyAccessor();
+        $property = $convertProperty->property;
+        if (!$accessor->isReadable($arr, $property)) {
+            return $arr;
+        }
+        $intValue = $accessor->getValue($arr, $property);
+        if (is_int($intValue)) {
+            $value = (new DateTime())->setTimestamp($intValue);
             $accessor->setValue($arr, $property, $value);
         }
 
