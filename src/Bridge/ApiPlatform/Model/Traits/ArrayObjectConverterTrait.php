@@ -131,6 +131,9 @@ trait ArrayObjectConverterTrait
                         $convertValues[$accessValue]
                     );
                 } elseif (!is_null($onlyConvertAccessValue) && is_array($onlyConvertAccessValue)) {
+                    if (true === $haveSubConvertProperties) {
+                        $onlyConvertAccessValue = self::convertProperties($subConvertProperties, $onlyConvertAccessValue);
+                    }
                     $accessor->setValue(
                         $arr,
                         $property,
