@@ -116,7 +116,7 @@ abstract class AbstractClient
     {
         return str_replace(
             $this->idPath,
-            $this->id,
+            (string) $this->id,
             $this->getUrl()
         );
     }
