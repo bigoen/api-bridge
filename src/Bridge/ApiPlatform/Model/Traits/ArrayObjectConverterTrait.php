@@ -116,7 +116,9 @@ trait ArrayObjectConverterTrait
                     if (true === $haveSubConvertProperties) {
                         $item = self::convertProperties($subConvertProperties, $item);
                     }
-                    $items[] = self::arrayToObject(new $convertProperty->itemClass(), $item);
+                    if (is_string($convertProperty->itemClass)) {
+                        $items[] = self::arrayToObject(new $convertProperty->itemClass(), $item);
+                    }
                 }
             }
             $accessor->setValue($arr, $property, $items);
@@ -134,11 +136,13 @@ trait ArrayObjectConverterTrait
                     if (true === $haveSubConvertProperties) {
                         $onlyConvertAccessValue = self::convertProperties($subConvertProperties, $onlyConvertAccessValue);
                     }
-                    $accessor->setValue(
-                        $arr,
-                        $property,
-                        self::arrayToObject(new $convertProperty->itemClass(), $onlyConvertAccessValue)
-                    );
+                    if (is_string($convertProperty->itemClass)) {
+                        $accessor->setValue(
+                            $arr,
+                            $property,
+                            self::arrayToObject(new $convertProperty->itemClass(), $onlyConvertAccessValue)
+                        );
+                    }
                 }
             }
         }
