@@ -9,6 +9,7 @@ use Bigoen\ApiBridge\Model\ConvertTimestampProperty;
 use Bigoen\ApiBridge\Model\ConvertTreeProperty;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -37,7 +38,11 @@ trait ArrayObjectConverterTrait
                         $propertyValue->add($data);
                     }
                 } else {
-                    $accessor->setValue($model, $property, $value);
+                    try {
+                        $accessor->setValue($model, $property, $value);
+                    } catch (InvalidArgumentException $e) {
+                        // not convert or php <= 7.4 type errors.
+                    }
                 }
             }
         }
