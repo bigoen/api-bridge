@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bigoen\ApiBridge\HttpClient\Traits;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
@@ -13,9 +14,31 @@ trait PutTrait
 {
     public function put(object $model): object
     {
-        $class = \get_class($model);
+        // request directly.
+        if (true === $this->isThrow() || null === $this->getThrowClass()) {
+            $class = $this->getClass();
 
-        return self::arrayToObject(new $class(), $this->putToArray(self::objectToArray($model)), $this->convertProperties);
+            return self::arrayToObject(
+                new $class(),
+                $this->putToArray(self::objectToArray($model)),
+                $this->convertProperties
+            );
+        }
+        $response = $this->putToResponse(self::objectToArray($model));
+        // check is success.
+        if (Response::HTTP_OK === $response->getStatusCode()) {
+            $class = $this->getClass();
+            $convertProperties = $this->convertProperties;
+        } else {
+            $class = $this->getThrowClass();
+            $convertProperties = $this->throwConvertProperties;
+        }
+
+        return self::arrayToObject(
+            new $class(),
+            $response->toArray($this->isThrow()),
+            $convertProperties
+        );
     }
 
     public function putToArray(array $arr): array

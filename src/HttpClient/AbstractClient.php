@@ -40,6 +40,7 @@ abstract class AbstractClient
      */
     protected $id = null;
     protected ?string $class = null;
+    protected ?string $throwClass = null;
     protected ?string $baseUrl = null;
     protected ?string $path = null;
     protected ?string $contentType = null;
@@ -48,6 +49,9 @@ abstract class AbstractClient
     protected string $idProperty = 'id';
     protected string $idPath = '{id}';
     protected string $format = self::JSON;
+
+    protected array $convertProperties = [];
+    protected array $throwConvertProperties = [];
 
     public function __construct(HttpClientInterface $httpClient)
     {
@@ -185,9 +189,33 @@ abstract class AbstractClient
         return $this;
     }
 
+    public function isThrow(): bool
+    {
+        return $this->throw;
+    }
+
+    public function getClass(): ?string
+    {
+        return $this->class;
+    }
+
     public function setClass(?string $class): self
     {
         $this->class = $class;
+
+        return $this;
+    }
+
+    public function getThrowClass(): ?string
+    {
+        return $this->throwClass;
+    }
+    public function setThrowClass(?string $throwClass): self
+    {
+        $this->throwClass = $throwClass;
+        if (null !== $throwClass) {
+            $this->setThrow(false);
+        }
 
         return $this;
     }
@@ -237,6 +265,20 @@ abstract class AbstractClient
     public function setFormats(array $formats): self
     {
         self::$formats = $formats;
+
+        return $this;
+    }
+
+    public function setConvertProperties(array $convertProperties): self
+    {
+        $this->convertProperties = $convertProperties;
+
+        return $this;
+    }
+
+    public function setThrowConvertProperties(array $throwConvertProperties): self
+    {
+        $this->throwConvertProperties = $throwConvertProperties;
 
         return $this;
     }
