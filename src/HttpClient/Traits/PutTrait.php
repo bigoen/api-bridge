@@ -13,8 +13,8 @@ trait PutTrait
 {
     public function put(object $model): object
     {
-        $class = get_class($model);
-        
+        $class = \get_class($model);
+
         return self::arrayToObject(new $class(), $this->putToArray(self::objectToArray($model)), $this->convertProperties);
     }
 

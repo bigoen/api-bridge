@@ -34,7 +34,7 @@ trait ArrayObjectConverterTrait
         $propertyInfo = self::getPropertyInfo();
         $accessor = self::getPropertyAccessor();
         $arr = [];
-        foreach ($propertyInfo->getProperties(get_class($model)) as $property) {
+        foreach ($propertyInfo->getProperties(\get_class($model)) as $property) {
             if ($accessor->isReadable($model, $property)) {
                 $arr[$property] = $accessor->getValue($model, $property);
             }

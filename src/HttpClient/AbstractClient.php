@@ -21,9 +21,9 @@ abstract class AbstractClient
 {
     use ArrayObjectConverterTrait;
 
-    const JSON = 'json';
-    const JSONLD = 'jsonld';
-    const XML = 'xml';
+    public const JSON = 'json';
+    public const JSONLD = 'jsonld';
+    public const XML = 'xml';
 
     protected HttpClientInterface $httpClient;
     protected bool $throw = true;
@@ -65,12 +65,12 @@ abstract class AbstractClient
      */
     public function request(string $method, string $url, ?array $data = null)
     {
-        if (is_array($data) && in_array($method, ['POST', 'PUT'])) {
+        if (\is_array($data) && \in_array($method, ['POST', 'PUT'])) {
             if (self::XML === $this->format) {
                 $data = $this->xmlEncode($data);
                 $this->options['body'] = $data;
                 $this->options['headers']['Content-Type'] = 'text/xml; charset=utf-8';
-            } elseif (in_array($this->format, [self::JSON, self::JSONLD])) {
+            } elseif (\in_array($this->format, [self::JSON, self::JSONLD])) {
                 $this->options['json'] = $data;
             } else {
                 $this->options['body'] = $data;
@@ -97,14 +97,14 @@ abstract class AbstractClient
     {
         $str = (new XmlEncoder())->encode($data, $format, $context);
 
-        return is_string($str) ? $str : null;
+        return \is_string($str) ? $str : null;
     }
 
     public function xmlDecode(string $data, string $format, array $context = []): ?array
     {
         $arr = (new XmlEncoder())->decode($data, $format, $context);
 
-        return is_array($arr) ? $arr : null;
+        return \is_array($arr) ? $arr : null;
     }
 
     public function getUrl(): string
@@ -148,7 +148,7 @@ abstract class AbstractClient
         $contentType = $response->getHeaders($this->throw)['content-type'][0];
         foreach (static::$formats as $name => $format) {
             foreach ($format as $strFormat) {
-                if (strpos($contentType, $strFormat) !== false) {
+                if (false !== strpos($contentType, $strFormat)) {
                     $this->contentType = $name;
 
                     return $this;

@@ -14,5 +14,8 @@ use Bigoen\ApiBridge\HttpClient\Traits\PutTrait;
  */
 class SimpleClient extends AbstractClient
 {
-    use GetTrait, PostTrait, PutTrait, DeleteTrait;
+    use DeleteTrait;
+    use GetTrait;
+    use PostTrait;
+    use PutTrait;
 }

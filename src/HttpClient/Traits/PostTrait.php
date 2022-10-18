@@ -13,7 +13,7 @@ trait PostTrait
 {
     public function post(object $model): object
     {
-        $class = get_class($model);
+        $class = \get_class($model);
 
         return self::arrayToObject(new $class(), $this->postToArray(self::objectToArray($model)), $this->convertProperties);
     }

@@ -20,8 +20,8 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
  */
 trait ArrayObjectConverterTrait
 {
-    static string $atId = 'jsonldId';
-    static string $atType = 'jsonldType';
+    public static string $atId = 'jsonldId';
+    public static string $atType = 'jsonldType';
 
     protected static ?PropertyAccessor $propertyAccessor = null;
     protected static ?PropertyInfoExtractor $propertyInfo = null;
@@ -33,7 +33,7 @@ trait ArrayObjectConverterTrait
         foreach ($arr as $property => $value) {
             if ($accessor->isWritable($model, $property)) {
                 $propertyValue = $accessor->getValue($model, $property);
-                if ($propertyValue instanceof Collection && is_array($value)) {
+                if ($propertyValue instanceof Collection && \is_array($value)) {
                     foreach ($value as $data) {
                         $propertyValue->add($data);
                     }
@@ -63,7 +63,7 @@ trait ArrayObjectConverterTrait
         $propertyInfo = self::getPropertyInfo();
         $accessor = self::getPropertyAccessor();
         $arr = [];
-        foreach ($propertyInfo->getProperties(get_class($model)) as $property) {
+        foreach ($propertyInfo->getProperties(\get_class($model)) as $property) {
             if ($accessor->isReadable($model, $property)) {
                 $arr[$property] = $accessor->getValue($model, $property);
             }
@@ -101,27 +101,27 @@ trait ArrayObjectConverterTrait
         $deep = $convertProperty->deep;
         $convertValues = $convertProperty->items;
         $subConvertProperties = $convertProperty->convertProperties;
-        $haveSubConvertProperties = count($subConvertProperties) > 0;
+        $haveSubConvertProperties = \count($subConvertProperties) > 0;
         if (false !== strpos($deep, '[]') && $accessor->isWritable($arr, $property)) {
             $items = [];
             $subArr = $accessor->getValue($arr, $property) ?? [];
             foreach ($subArr as $key => $item) {
                 $deepKey = str_replace('[]', "[$key]", $deep);
                 $accessValue = $accessor->getValue($arr, $deepKey);
-                if (!is_null($accessValue) && isset($convertValues[$accessValue])) {
-                    if (is_string($item)) {
+                if (null !== $accessValue && isset($convertValues[$accessValue])) {
+                    if (\is_string($item)) {
                         $items[] = $convertValues[$accessValue];
-                    } elseif (is_array($item)) {
+                    } elseif (\is_array($item)) {
                         if (true === $haveSubConvertProperties) {
                             $item = self::convertProperties($subConvertProperties, $item);
                         }
                         $items[] = self::arrayToObject($convertValues[$accessValue], $item);
                     }
-                } elseif (is_array($item)) {
+                } elseif (\is_array($item)) {
                     if (true === $haveSubConvertProperties) {
                         $item = self::convertProperties($subConvertProperties, $item);
                     }
-                    if (is_string($convertProperty->itemClass)) {
+                    if (\is_string($convertProperty->itemClass)) {
                         $items[] = self::arrayToObject(new $convertProperty->itemClass(), $item);
                     }
                 }
@@ -131,17 +131,17 @@ trait ArrayObjectConverterTrait
             if ($accessor->isReadable($arr, $deep) && $accessor->isWritable($arr, $property)) {
                 $accessValue = $accessor->getValue($arr, $deep);
                 $onlyConvertAccessValue = $accessor->getValue($arr, $property);
-                if (!is_null($accessValue) && isset($convertValues[$accessValue])) {
+                if (null !== $accessValue && isset($convertValues[$accessValue])) {
                     $accessor->setValue(
                         $arr,
                         $property,
                         $convertValues[$accessValue]
                     );
-                } elseif (!is_null($onlyConvertAccessValue) && is_array($onlyConvertAccessValue)) {
+                } elseif (null !== $onlyConvertAccessValue && \is_array($onlyConvertAccessValue)) {
                     if (true === $haveSubConvertProperties) {
                         $onlyConvertAccessValue = self::convertProperties($subConvertProperties, $onlyConvertAccessValue);
                     }
-                    if (is_string($convertProperty->itemClass)) {
+                    if (\is_string($convertProperty->itemClass)) {
                         $accessor->setValue(
                             $arr,
                             $property,
@@ -163,7 +163,7 @@ trait ArrayObjectConverterTrait
             return $arr;
         }
         $strValue = $accessor->getValue($arr, $property);
-        if (is_string($strValue)) {
+        if (\is_string($strValue)) {
             $value = DateTime::createFromFormat($convertProperty->format, $strValue);
             $accessor->setValue($arr, $property, $value);
         }
@@ -179,7 +179,7 @@ trait ArrayObjectConverterTrait
             return $arr;
         }
         $intValue = $accessor->getValue($arr, $property);
-        if (is_int($intValue)) {
+        if (\is_int($intValue)) {
             $value = (new DateTime())->setTimestamp($intValue);
             $accessor->setValue($arr, $property, $value);
         }

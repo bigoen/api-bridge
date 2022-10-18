@@ -16,7 +16,11 @@ use Bigoen\ApiBridge\HttpClient\Traits\PutTrait;
  */
 class JsonldClient extends AbstractClient
 {
-    use GetTrait, PostTrait, PutTrait, DeleteTrait, ArrayObjectConverterTrait;
+    use ArrayObjectConverterTrait;
+    use DeleteTrait;
+    use GetTrait;
+    use PostTrait;
+    use PutTrait;
 
     protected array $convertProperties = [];
 

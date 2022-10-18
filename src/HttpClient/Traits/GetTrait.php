@@ -30,7 +30,7 @@ trait GetTrait
     {
         $objects = [];
         $arr = $this->getAllToArray();
-        if (is_string($dataPath) && isset($arr[$dataPath])) {
+        if (\is_string($dataPath) && isset($arr[$dataPath])) {
             $arr = $arr[$dataPath];
         }
         foreach ($arr as $value) {

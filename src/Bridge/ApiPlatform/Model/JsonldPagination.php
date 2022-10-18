@@ -12,7 +12,8 @@ use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits\JsonldModelTrait;
  */
 class JsonldPagination
 {
-    use ArrayObjectConverterTrait, JsonldModelTrait;
+    use ArrayObjectConverterTrait;
+    use JsonldModelTrait;
 
     public ?string $jsonldContext = null;
     public array $members = [];
