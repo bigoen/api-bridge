@@ -20,9 +20,23 @@ class Example
 }
 ```
 
+If you want error class, create model:
+```php
+<?php
+
+namespace App\Model;
+
+class Error 
+{
+    public ?string $status = null;
+    public ?string $message = null;
+}
+```
+
 Create client:
 ```php
 use App\Model\Example;
+use App\Model\Error;
 use Symfony\Component\HttpClient\HttpClient;
 use Bigoen\ApiBridge\HttpClient\SimpleClient;
 
@@ -31,6 +45,7 @@ $client = new SimpleClient($httpClient);
 $client
     ->setBaseUrl("http://example.com")
     ->setClass(Example::class)
+    ->setThrowClass(Error:class)
     ->setOptions([
         // Set http client request options.
     ]);
