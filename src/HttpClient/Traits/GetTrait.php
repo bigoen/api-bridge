@@ -18,7 +18,7 @@ trait GetTrait
 
     public function getToArray(): array
     {
-        return $this->request('GET', $this->getItemUrl());
+        return $this->setReturnOnlyResponse(false)->request('GET', $this->getItemUrl());
     }
 
     public function getToResponse(): ResponseInterface
@@ -42,6 +42,6 @@ trait GetTrait
 
     public function getAllToArray(): array
     {
-        return $this->request('GET', $this->getUrl());
+        return $this->setReturnOnlyResponse(false)->request('GET', $this->getUrl());
     }
 }
