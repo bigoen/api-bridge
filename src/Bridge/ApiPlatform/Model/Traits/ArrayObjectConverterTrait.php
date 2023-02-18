@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits;
 
-use Bigoen\ApiBridge\Model\ConvertDateTimeProperty;
-use Bigoen\ApiBridge\Model\ConvertTimestampProperty;
-use Bigoen\ApiBridge\Model\ConvertTreeProperty;
-use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -20,6 +16,8 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
  */
 trait ArrayObjectConverterTrait
 {
+    use \Bigoen\ApiBridge\Model\Traits\ArrayObjectConverterTrait;
+
     public static string $atId = 'jsonldId';
     public static string $atType = 'jsonldType';
 
@@ -74,114 +72,6 @@ trait ArrayObjectConverterTrait
         ) {
             $arr['@id'] = $accessor->getValue($model, self::$atId);
             $arr['@type'] = $accessor->getValue($model, self::$atType);
-        }
-
-        return $arr;
-    }
-
-    public static function convertProperties(array $convertProperties, array $arr): array
-    {
-        foreach ($convertProperties as $convertProperty) {
-            if ($convertProperty instanceof ConvertTreeProperty) {
-                $arr = self::convertTreeProperty($convertProperty, $arr);
-            } elseif ($convertProperty instanceof ConvertDateTimeProperty) {
-                $arr = self::convertDateTimeProperty($convertProperty, $arr);
-            } elseif ($convertProperty instanceof ConvertTimestampProperty) {
-                $arr = self::convertTimestampProperty($convertProperty, $arr);
-            }
-        }
-
-        return $arr;
-    }
-
-    public static function convertTreeProperty(ConvertTreeProperty $convertProperty, array $arr): array
-    {
-        $accessor = self::getPropertyAccessor();
-        $property = $convertProperty->property;
-        $deep = $convertProperty->deep;
-        $convertValues = $convertProperty->items;
-        $subConvertProperties = $convertProperty->convertProperties;
-        $haveSubConvertProperties = \count($subConvertProperties) > 0;
-        if (false !== strpos($deep, '[]') && $accessor->isWritable($arr, $property)) {
-            $items = [];
-            $subArr = $accessor->getValue($arr, $property) ?? [];
-            foreach ($subArr as $key => $item) {
-                $deepKey = str_replace('[]', "[$key]", $deep);
-                $accessValue = $accessor->getValue($arr, $deepKey);
-                if (null !== $accessValue && isset($convertValues[$accessValue])) {
-                    if (\is_string($item)) {
-                        $items[] = $convertValues[$accessValue];
-                    } elseif (\is_array($item)) {
-                        if (true === $haveSubConvertProperties) {
-                            $item = self::convertProperties($subConvertProperties, $item);
-                        }
-                        $items[] = self::arrayToObject($convertValues[$accessValue], $item);
-                    }
-                } elseif (\is_array($item)) {
-                    if (true === $haveSubConvertProperties) {
-                        $item = self::convertProperties($subConvertProperties, $item);
-                    }
-                    if (\is_string($convertProperty->itemClass)) {
-                        $items[] = self::arrayToObject(new $convertProperty->itemClass(), $item);
-                    }
-                }
-            }
-            $accessor->setValue($arr, $property, $items);
-        } else {
-            if ($accessor->isReadable($arr, $deep) && $accessor->isWritable($arr, $property)) {
-                $accessValue = $accessor->getValue($arr, $deep);
-                $onlyConvertAccessValue = $accessor->getValue($arr, $property);
-                if (null !== $accessValue && isset($convertValues[$accessValue])) {
-                    $accessor->setValue(
-                        $arr,
-                        $property,
-                        $convertValues[$accessValue]
-                    );
-                } elseif (null !== $onlyConvertAccessValue && \is_array($onlyConvertAccessValue)) {
-                    if (true === $haveSubConvertProperties) {
-                        $onlyConvertAccessValue = self::convertProperties($subConvertProperties, $onlyConvertAccessValue);
-                    }
-                    if (\is_string($convertProperty->itemClass)) {
-                        $accessor->setValue(
-                            $arr,
-                            $property,
-                            self::arrayToObject(new $convertProperty->itemClass(), $onlyConvertAccessValue)
-                        );
-                    }
-                }
-            }
-        }
-
-        return $arr;
-    }
-
-    public static function convertDateTimeProperty(ConvertDateTimeProperty $convertProperty, array $arr): array
-    {
-        $accessor = self::getPropertyAccessor();
-        $property = $convertProperty->property;
-        if (!$accessor->isReadable($arr, $property)) {
-            return $arr;
-        }
-        $strValue = $accessor->getValue($arr, $property);
-        if (\is_string($strValue)) {
-            $value = DateTime::createFromFormat($convertProperty->format, $strValue);
-            $accessor->setValue($arr, $property, $value);
-        }
-
-        return $arr;
-    }
-
-    public static function convertTimestampProperty(ConvertTimestampProperty $convertProperty, array $arr): array
-    {
-        $accessor = self::getPropertyAccessor();
-        $property = $convertProperty->property;
-        if (!$accessor->isReadable($arr, $property)) {
-            return $arr;
-        }
-        $intValue = $accessor->getValue($arr, $property);
-        if (\is_int($intValue)) {
-            $value = (new DateTime())->setTimestamp($intValue);
-            $accessor->setValue($arr, $property, $value);
         }
 
         return $arr;

@@ -133,6 +133,7 @@ Convert api values in tree.
 use Bigoen\ApiBridge\Bridge\ApiPlatform\HttpClient\JsonldClient;
 use Bigoen\ApiBridge\Model\ConvertDateTimeProperty;
 use Bigoen\ApiBridge\Model\ConvertTreeProperty;
+use Bigoen\ApiBridge\Model\ConvertProperty;
 
 $categories = $this->entityManager
     ->getRepository(Category::class)
@@ -162,6 +163,8 @@ $convertProperties = [
     ),
     ConvertDateTimeProperty::new('[createdAt]'),
     ConvertDateTimeProperty::new('[updatedAt]'),
+    // class property and api property.
+    ConvertProperty::new('[id]', '[_id]'),
 ];
 /* @var $client JsonldClient */
 $client->setConvertProperties($convertProperties);
