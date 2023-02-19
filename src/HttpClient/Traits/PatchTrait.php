@@ -10,9 +10,9 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 /**
  * @author Şafak Saylam <safak@bigoen.com>
  */
-trait PutTrait
+trait PatchTrait
 {
-    public function put(object $model): object
+    public function patch(object $model): object
     {
         // request directly.
         if (true === $this->isThrow() || null === $this->getThrowClass()) {
@@ -20,11 +20,11 @@ trait PutTrait
 
             return self::arrayToObject(
                 new $class(),
-                $this->putToArray(self::objectToArray($model, $this->sendingConvertProperties)),
+                $this->patchToArray(self::objectToArray($model, $this->sendingConvertProperties)),
                 $this->convertProperties
             );
         }
-        $response = $this->putToResponse(self::objectToArray($model, $this->sendingConvertProperties));
+        $response = $this->patchToResponse(self::objectToArray($model, $this->sendingConvertProperties));
         // check is success.
         if (Response::HTTP_OK === $response->getStatusCode()) {
             $class = $this->getClass();
@@ -41,13 +41,13 @@ trait PutTrait
         );
     }
 
-    public function putToArray(array $arr): array
+    public function patchToArray(array $arr): array
     {
-        return $this->request('PUT', $this->getItemUrl(), $arr);
+        return $this->request('PATCH', $this->getItemUrl(), $arr);
     }
 
-    public function putToResponse(array $arr): ResponseInterface
+    public function patchToResponse(array $arr): ResponseInterface
     {
-        return $this->setReturnOnlyResponse(true)->request('PUT', $this->getUrl(), $arr);
+        return $this->setReturnOnlyResponse(true)->request('PATCH', $this->getUrl(), $arr);
     }
 }

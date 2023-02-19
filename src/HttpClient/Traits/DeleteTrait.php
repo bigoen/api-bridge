@@ -13,7 +13,7 @@ trait DeleteTrait
 {
     public function delete(): bool
     {
-        return 204 === $this->request('DELETE', $this->getItemUrl());
+        return $this->deleteSuccessStatusCode === $this->request('DELETE', $this->getItemUrl());
     }
 
     public function deleteToResponse(): ResponseInterface

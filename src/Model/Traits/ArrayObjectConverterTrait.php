@@ -8,6 +8,7 @@ use Bigoen\ApiBridge\Model\ConvertDateTimeProperty;
 use Bigoen\ApiBridge\Model\ConvertProperty;
 use Bigoen\ApiBridge\Model\ConvertTimestampProperty;
 use Bigoen\ApiBridge\Model\ConvertTreeProperty;
+use Bigoen\ApiBridge\Model\ConvertUnsetsProperty;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
@@ -48,7 +49,7 @@ trait ArrayObjectConverterTrait
         return $model;
     }
 
-    public static function objectToArray(object $model): array
+    public static function objectToArray(object $model, array $convertProperties = []): array
     {
         $propertyInfo = self::getPropertyInfo();
         $accessor = self::getPropertyAccessor();
@@ -59,7 +60,7 @@ trait ArrayObjectConverterTrait
             }
         }
 
-        return $arr;
+        return self::convertProperties($convertProperties, $arr);
     }
 
     public static function convertProperties(array $convertProperties, array $arr): array
@@ -67,6 +68,8 @@ trait ArrayObjectConverterTrait
         foreach ($convertProperties as $convertProperty) {
             if ($convertProperty instanceof ConvertProperty) {
                 $arr = self::convertProperty($convertProperty, $arr);
+            } elseif ($convertProperty instanceof ConvertUnsetsProperty) {
+                $arr = self::convertUnsetsProperty($convertProperty, $arr);
             } elseif ($convertProperty instanceof ConvertTreeProperty) {
                 $arr = self::convertTreeProperty($convertProperty, $arr);
             } elseif ($convertProperty instanceof ConvertDateTimeProperty) {
@@ -88,6 +91,15 @@ trait ArrayObjectConverterTrait
         }
         $value = $accessor->getValue($arr, $apiProperty);
         $accessor->setValue($arr, $convertProperty->property, $value);
+
+        return $arr;
+    }
+
+    public static function convertUnsetsProperty(ConvertUnsetsProperty $convertProperty, array $arr): array
+    {
+        foreach ($convertProperty->properties as $property) {
+            unset($arr[$property]);
+        }
 
         return $arr;
     }

@@ -8,6 +8,7 @@ use Bigoen\ApiBridge\Bridge\ApiPlatform\HttpClient\Traits\GetTrait;
 use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits\ArrayObjectConverterTrait;
 use Bigoen\ApiBridge\HttpClient\AbstractClient;
 use Bigoen\ApiBridge\HttpClient\Traits\DeleteTrait;
+use Bigoen\ApiBridge\HttpClient\Traits\PatchTrait;
 use Bigoen\ApiBridge\HttpClient\Traits\PostTrait;
 use Bigoen\ApiBridge\HttpClient\Traits\PutTrait;
 
@@ -21,4 +22,5 @@ class JsonldClient extends AbstractClient
     use GetTrait;
     use PostTrait;
     use PutTrait;
+    use PatchTrait;
 }

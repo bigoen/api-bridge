@@ -29,6 +29,8 @@ abstract class AbstractClient
     protected bool $throw = true;
     protected bool $returnOnlyResponse = false;
 
+    protected int $deleteSuccessStatusCode = 204;
+
     public static array $formats = [
         self::JSON => ['application/json', 'application/x-json'],
         self::JSONLD => ['application/ld+json'],
@@ -51,6 +53,7 @@ abstract class AbstractClient
     protected string $format = self::JSON;
 
     protected array $convertProperties = [];
+    protected array $sendingConvertProperties = [];
     protected array $throwConvertProperties = [];
 
     public function __construct(HttpClientInterface $httpClient)
@@ -182,6 +185,13 @@ abstract class AbstractClient
         return $this;
     }
 
+    public function setDeleteSuccessStatusCode(int $deleteSuccessStatusCode): self
+    {
+        $this->deleteSuccessStatusCode = $deleteSuccessStatusCode;
+
+        return $this;
+    }
+
     public function setId($id): self
     {
         $this->id = $id;
@@ -272,6 +282,13 @@ abstract class AbstractClient
     public function setConvertProperties(array $convertProperties): self
     {
         $this->convertProperties = $convertProperties;
+
+        return $this;
+    }
+
+    public function setSendingConvertProperties(array $sendingConvertProperties): self
+    {
+        $this->sendingConvertProperties = $sendingConvertProperties;
 
         return $this;
     }

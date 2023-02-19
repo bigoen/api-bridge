@@ -56,7 +56,7 @@ trait ArrayObjectConverterTrait
         return $model;
     }
 
-    public static function objectToArray(object $model): array
+    public static function objectToArray(object $model, array $convertProperties = []): array
     {
         $propertyInfo = self::getPropertyInfo();
         $accessor = self::getPropertyAccessor();
@@ -74,7 +74,7 @@ trait ArrayObjectConverterTrait
             $arr['@type'] = $accessor->getValue($model, self::$atType);
         }
 
-        return $arr;
+        return self::convertProperties($convertProperties, $arr);
     }
 
     public static function getPropertyAccessor(): PropertyAccessor

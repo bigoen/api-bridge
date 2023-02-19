@@ -20,11 +20,11 @@ trait PostTrait
 
             return self::arrayToObject(
                 new $class(),
-                $this->postToArray(self::objectToArray($model)),
+                $this->postToArray(self::objectToArray($model, $this->sendingConvertProperties)),
                 $this->convertProperties
             );
         }
-        $response = $this->postToResponse(self::objectToArray($model));
+        $response = $this->postToResponse(self::objectToArray($model, $this->sendingConvertProperties));
         // check is success.
         if (\in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_CREATED])) {
             $class = $this->getClass();

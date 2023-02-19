@@ -6,6 +6,7 @@ namespace Bigoen\ApiBridge\HttpClient;
 
 use Bigoen\ApiBridge\HttpClient\Traits\DeleteTrait;
 use Bigoen\ApiBridge\HttpClient\Traits\GetTrait;
+use Bigoen\ApiBridge\HttpClient\Traits\PatchTrait;
 use Bigoen\ApiBridge\HttpClient\Traits\PostTrait;
 use Bigoen\ApiBridge\HttpClient\Traits\PutTrait;
 
@@ -18,4 +19,5 @@ class SimpleClient extends AbstractClient
     use GetTrait;
     use PostTrait;
     use PutTrait;
+    use PatchTrait;
 }
