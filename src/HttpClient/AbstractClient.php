@@ -72,7 +72,7 @@ abstract class AbstractClient
      */
     public function request(string $method, string $url, ?array $data = null)
     {
-        if (\is_array($data) && \in_array($method, ['POST', 'PUT'])) {
+        if (\is_array($data) && \in_array($method, ['POST', 'PUT', 'PATCH'])) {
             if (self::XML === $this->format) {
                 $data = $this->xmlEncode($data);
                 $this->options['body'] = $data;
