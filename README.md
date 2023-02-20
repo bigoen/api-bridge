@@ -133,6 +133,7 @@ Convert api values in tree.
 use Bigoen\ApiBridge\Bridge\ApiPlatform\HttpClient\JsonldClient;
 use Bigoen\ApiBridge\Model\ConvertDateTimeProperty;
 use Bigoen\ApiBridge\Model\ConvertTreeProperty;
+use Bigoen\ApiBridge\Model\ConvertUnsetsProperty;
 use Bigoen\ApiBridge\Model\ConvertProperty;
 
 $categories = $this->entityManager
@@ -166,7 +167,11 @@ $convertProperties = [
     // class property and api property.
     ConvertProperty::new('[id]', '[_id]'),
 ];
+// unsets for sending.
+$sendingConvertProperties = [
+    ConvertUnsetsProperty::new(['id', 'name']),
+];
 /* @var $client JsonldClient */
-$client->setConvertProperties($convertProperties);
+$client->setConvertProperties($convertProperties)->setSendingConvertProperties($sendingConvertProperties);
 ```
 Important: property and deep names details > https://symfony.com/doc/current/components/property_access.html
