@@ -9,7 +9,6 @@ use Bigoen\ApiBridge\Model\ConvertProperty;
 use Bigoen\ApiBridge\Model\ConvertTimestampProperty;
 use Bigoen\ApiBridge\Model\ConvertTreeProperty;
 use Bigoen\ApiBridge\Model\ConvertUnsetsProperty;
-use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -174,7 +173,7 @@ trait ArrayObjectConverterTrait
         }
         $strValue = $accessor->getValue($arr, $property);
         if (\is_string($strValue)) {
-            $value = DateTime::createFromFormat($convertProperty->format, $strValue);
+            $value = \DateTime::createFromFormat($convertProperty->format, $strValue);
             $accessor->setValue($arr, $property, $value);
         }
 
@@ -190,7 +189,7 @@ trait ArrayObjectConverterTrait
         }
         $intValue = $accessor->getValue($arr, $property);
         if (\is_int($intValue)) {
-            $value = (new DateTime())->setTimestamp($intValue);
+            $value = (new \DateTime())->setTimestamp($intValue);
             $accessor->setValue($arr, $property, $value);
         }
 

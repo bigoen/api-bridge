@@ -17,7 +17,7 @@ class SimpleClient extends AbstractClient
 {
     use DeleteTrait;
     use GetTrait;
+    use PatchTrait;
     use PostTrait;
     use PutTrait;
-    use PatchTrait;
 }

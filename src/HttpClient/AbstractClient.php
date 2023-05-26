@@ -220,6 +220,7 @@ abstract class AbstractClient
     {
         return $this->throwClass;
     }
+
     public function setThrowClass(?string $throwClass): self
     {
         $this->throwClass = $throwClass;

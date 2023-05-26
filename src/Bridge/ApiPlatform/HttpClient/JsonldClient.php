@@ -20,7 +20,7 @@ class JsonldClient extends AbstractClient
     use ArrayObjectConverterTrait;
     use DeleteTrait;
     use GetTrait;
+    use PatchTrait;
     use PostTrait;
     use PutTrait;
-    use PatchTrait;
 }
