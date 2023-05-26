@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bigoen\ApiBridge\HttpClient;
 
-use Bigoen\ApiBridge\Model\Traits\ArrayObjectConverterTrait;
+use Bigoen\ApiBridgeConverter\Model\Traits\ArrayObjectConverterTrait;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;

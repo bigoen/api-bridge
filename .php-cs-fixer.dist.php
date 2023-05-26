@@ -20,8 +20,8 @@ return $config
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        '@PHP74Migration' => true,
-        '@PHP74Migration:risky' => true,
+        '@PHP81Migration' => true,
+        '@PHP81Migration:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
         'fopen_flags' => false,
         'ordered_imports' => true,
