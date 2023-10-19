@@ -26,12 +26,12 @@ trait GetTrait
         return $this->setReturnOnlyResponse(true)->request('GET', $this->getItemUrl());
     }
 
-    public function getAll(?string $dataPath = null): array
+    public function getAll(array $convertProperties = []): array
     {
         $objects = [];
         $arr = $this->getAllToArray();
-        if (\is_string($dataPath) && isset($arr[$dataPath])) {
-            $arr = $arr[$dataPath];
+        if (\count($convertProperties) > 0) {
+            $arr = self::convertProperties($convertProperties, $arr);
         }
         foreach ($arr as $value) {
             $objects[] = self::arrayToObject(new $this->class(), $value, $this->convertProperties);
