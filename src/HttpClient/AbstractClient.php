@@ -40,7 +40,7 @@ abstract class AbstractClient
     /**
      * @var string|int|null
      */
-    protected $id = null;
+    protected $id;
     protected ?string $class = null;
     protected ?string $throwClass = null;
     protected ?string $baseUrl = null;
@@ -70,7 +70,7 @@ abstract class AbstractClient
      * @throws TransportExceptionInterface
      * @throws DecodingExceptionInterface
      */
-    public function request(string $method, string $url, ?array $data = null)
+    public function request(string $method, string $url, array $data = null)
     {
         if (\is_array($data) && \in_array($method, ['POST', 'PUT', 'PATCH'])) {
             if (self::XML === $this->format) {
@@ -155,7 +155,7 @@ abstract class AbstractClient
         $contentType = $response->getHeaders($this->throw)['content-type'][0];
         foreach (static::$formats as $name => $format) {
             foreach ($format as $strFormat) {
-                if (false !== strpos($contentType, $strFormat)) {
+                if (str_contains($contentType, $strFormat)) {
                     $this->contentType = $name;
 
                     return $this;

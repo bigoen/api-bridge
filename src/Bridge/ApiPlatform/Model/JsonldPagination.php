@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Bigoen\ApiBridge\Bridge\ApiPlatform\Model;
 
-use Bigoen\ApiBridgeConverter\Bridge\ApiPlatform\Model\Traits\ArrayObjectConverterTrait;
 use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\Traits\JsonldModelTrait;
+use Bigoen\ApiBridgeConverter\Bridge\ApiPlatform\Model\Traits\ArrayObjectConverterTrait;
 
 /**
  * @author Şafak Saylam <safak@bigoen.com>
