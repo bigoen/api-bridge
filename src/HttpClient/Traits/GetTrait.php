@@ -43,6 +43,7 @@ trait GetTrait
         $response = $this->getToResponse();
         // check is success.
         if (Response::HTTP_OK === $response->getStatusCode()) {
+            $arr = $response->toArray($this->isThrow());
             if (\count($convertProperties) > 0) {
                 $arr = self::convertProperties($convertProperties, $arr);
             }
