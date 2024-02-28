@@ -12,7 +12,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
  */
 trait PostTrait
 {
-    public function post(object $model): object
+    public function post(?object $model = null): object
     {
         // request directly.
         if (true === $this->isThrow() || null === $this->getThrowClass()) {

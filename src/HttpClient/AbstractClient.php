@@ -72,7 +72,7 @@ abstract class AbstractClient
      */
     public function request(string $method, string $url, array $data = null)
     {
-        if (\is_array($data) && \in_array($method, ['POST', 'PUT', 'PATCH'])) {
+        if (\is_array($data) && count($data) > 0 && \in_array($method, ['POST', 'PUT', 'PATCH'])) {
             if (self::XML === $this->format) {
                 $data = $this->xmlEncode($data);
                 $this->options['body'] = $data;
@@ -241,6 +241,13 @@ abstract class AbstractClient
     public function setPath(?string $path): self
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function withOptions(array $options): self
+    {
+        $this->options = array_merge_recursive($this->options, $options);
 
         return $this;
     }
