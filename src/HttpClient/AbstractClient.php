@@ -72,18 +72,19 @@ abstract class AbstractClient
      */
     public function request(string $method, string $url, array $data = null)
     {
+        $options = $this->options;
         if (\is_array($data) && count($data) > 0 && \in_array($method, ['POST', 'PUT', 'PATCH'])) {
             if (self::XML === $this->format) {
                 $data = $this->xmlEncode($data);
-                $this->options['body'] = $data;
-                $this->options['headers']['Content-Type'] = 'text/xml; charset=utf-8';
+                $options['body'] = $data;
+                $options['headers']['Content-Type'] = 'text/xml; charset=utf-8';
             } elseif (\in_array($this->format, [self::JSON, self::JSONLD])) {
-                $this->options['json'] = $data;
+                $options['json'] = $data;
             } else {
-                $this->options['body'] = $data;
+                $options['body'] = $data;
             }
         }
-        $response = $this->httpClient->request($method, $url, $this->options);
+        $response = $this->httpClient->request($method, $url, $options);
         if (true === $this->returnOnlyResponse) {
             $this->setContentType($response);
 
@@ -102,9 +103,7 @@ abstract class AbstractClient
 
     public function xmlEncode($data, string $format = self::XML, array $context = []): ?string
     {
-        $str = (new XmlEncoder())->encode($data, $format, $context);
-
-        return \is_string($str) ? $str : null;
+        return (new XmlEncoder())->encode($data, $format, $context);
     }
 
     public function xmlDecode(string $data, string $format, array $context = []): ?array
