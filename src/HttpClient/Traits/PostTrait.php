@@ -33,9 +33,9 @@ trait PostTrait
         return $this->request('POST', $this->getUrl(), $arr);
     }
 
-    public function postToResponse(array|object $arr): ResponseInterface
+    public function postToResponse(array|object|null $arr): ResponseInterface
     {
-        if (is_object($arr)) {
+        if (!is_array($arr)) {
             $arr = self::objectToArray($arr, $this->sendingConvertProperties);
         }
 
