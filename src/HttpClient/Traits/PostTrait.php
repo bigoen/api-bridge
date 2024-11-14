@@ -25,6 +25,12 @@ trait PostTrait
             );
         }
         $response = $this->postToResponse(self::objectToArray($model, $this->sendingConvertProperties));
+
+        return $this->responseToObject($response);
+    }
+
+    public function responseToObject(ResponseInterface $response): object
+    {
         // check is success.
         if (\in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_CREATED])) {
             $class = $this->getClass();

@@ -15,7 +15,11 @@ trait GetTrait
 {
     public function get(): ?object
     {
-        $response = $this->getToResponse();
+        return $this->responseToObject($this->getToResponse());
+    }
+
+    public function responseToObject(ResponseInterface $response): ?object
+    {
         // check is success.
         if (Response::HTTP_OK === $response->getStatusCode()) {
             $class = $this->getClass();
