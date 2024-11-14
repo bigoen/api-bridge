@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Bigoen\ApiBridge\Bridge\ApiPlatform\HttpClient\Traits;
 
 use Bigoen\ApiBridge\Bridge\ApiPlatform\Model\JsonldPagination;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
@@ -16,20 +15,6 @@ trait GetTrait
     public function get(): ?object
     {
         return $this->responseToObject($this->getToResponse());
-    }
-
-    public function responseToObject(ResponseInterface $response): ?object
-    {
-        // check is success.
-        if (Response::HTTP_OK === $response->getStatusCode()) {
-            $class = $this->getClass();
-            $convertProperties = $this->convertProperties;
-        } else {
-            $class = $this->getThrowClass();
-            $convertProperties = $this->throwConvertProperties;
-        }
-
-        return self::arrayToObject(new $class(), $response->toArray($this->isThrow()), $convertProperties);
     }
 
     public function getToArray(): array

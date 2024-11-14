@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Bigoen\ApiBridge\HttpClient\Traits;
 
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
@@ -27,24 +26,6 @@ trait PatchTrait
         $response = $this->patchToResponse(self::objectToArray($model, $this->sendingConvertProperties));
 
         return $this->responseToObject($response);
-    }
-
-    public function responseToObject(ResponseInterface $response): object
-    {
-        // check is success.
-        if (Response::HTTP_OK === $response->getStatusCode()) {
-            $class = $this->getClass();
-            $convertProperties = $this->convertProperties;
-        } else {
-            $class = $this->getThrowClass();
-            $convertProperties = $this->throwConvertProperties;
-        }
-
-        return self::arrayToObject(
-            new $class(),
-            $response->toArray($this->isThrow()),
-            $convertProperties
-        );
     }
 
     public function patchToArray(array $arr): array

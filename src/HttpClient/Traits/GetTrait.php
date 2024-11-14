@@ -17,20 +17,6 @@ trait GetTrait
         return $this->responseToObject($this->getToResponse());
     }
 
-    public function responseToObject(ResponseInterface $response): ?object
-    {
-        // check is success.
-        if (Response::HTTP_OK === $response->getStatusCode()) {
-            $class = $this->getClass();
-            $convertProperties = $this->convertProperties;
-        } else {
-            $class = $this->getThrowClass();
-            $convertProperties = $this->throwConvertProperties;
-        }
-
-        return self::arrayToObject(new $class(), $response->toArray($this->isThrow()), $convertProperties);
-    }
-
     public function getToArray(): array
     {
         return $this->setReturnOnlyResponse(false)->request('GET', $this->getItemUrl());

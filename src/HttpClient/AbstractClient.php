@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bigoen\ApiBridge\HttpClient;
 
 use Bigoen\ApiBridgeConverter\Model\Traits\ArrayObjectConverterTrait;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -305,5 +306,23 @@ abstract class AbstractClient
         $this->throwConvertProperties = $throwConvertProperties;
 
         return $this;
+    }
+
+    public function responseToObject(ResponseInterface $response): object
+    {
+        // check is success.
+        if (\in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_CREATED])) {
+            $class = $this->getClass();
+            $convertProperties = $this->convertProperties;
+        } else {
+            $class = $this->getThrowClass();
+            $convertProperties = $this->throwConvertProperties;
+        }
+
+        return self::arrayToObject(
+            new $class(),
+            $response->toArray($this->isThrow()),
+            $convertProperties
+        );
     }
 }
