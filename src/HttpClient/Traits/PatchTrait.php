@@ -23,7 +23,7 @@ trait PatchTrait
                 $this->convertProperties
             );
         }
-        $response = $this->patchToResponse(self::objectToArray($model, $this->sendingConvertProperties));
+        $response = $this->patchToResponse($model);
 
         return $this->responseToObject($response);
     }
@@ -33,8 +33,12 @@ trait PatchTrait
         return $this->request('PATCH', $this->getItemUrl(), $arr);
     }
 
-    public function patchToResponse(array $arr): ResponseInterface
+    public function patchToResponse(array|object $arr): ResponseInterface
     {
+        if (is_object($arr)) {
+            $arr = self::objectToArray($arr, $this->sendingConvertProperties);
+        }
+
         return $this->setReturnOnlyResponse(true)->request('PATCH', $this->getUrl(), $arr);
     }
 }

@@ -23,7 +23,7 @@ trait PutTrait
                 $this->convertProperties
             );
         }
-        $response = $this->putToResponse(self::objectToArray($model, $this->sendingConvertProperties));
+        $response = $this->putToResponse($model);
 
         return $this->responseToObject($response);
     }
@@ -33,8 +33,12 @@ trait PutTrait
         return $this->request('PUT', $this->getItemUrl(), $arr);
     }
 
-    public function putToResponse(array $arr): ResponseInterface
+    public function putToResponse(array|object $arr): ResponseInterface
     {
+        if (is_object($arr)) {
+            $arr = self::objectToArray($arr, $this->sendingConvertProperties);
+        }
+
         return $this->setReturnOnlyResponse(true)->request('PUT', $this->getUrl(), $arr);
     }
 }

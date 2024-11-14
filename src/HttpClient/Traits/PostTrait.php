@@ -23,7 +23,7 @@ trait PostTrait
                 $this->convertProperties
             );
         }
-        $response = $this->postToResponse(self::objectToArray($model, $this->sendingConvertProperties));
+        $response = $this->postToResponse($model);
 
         return $this->responseToObject($response);
     }
@@ -33,8 +33,12 @@ trait PostTrait
         return $this->request('POST', $this->getUrl(), $arr);
     }
 
-    public function postToResponse(array $arr): ResponseInterface
+    public function postToResponse(array|object $arr): ResponseInterface
     {
+        if (is_object($arr)) {
+            $arr = self::objectToArray($arr, $this->sendingConvertProperties);
+        }
+
         return $this->setReturnOnlyResponse(true)->request('POST', $this->getUrl(), $arr);
     }
 }
